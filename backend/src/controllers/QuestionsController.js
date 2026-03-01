@@ -1,4 +1,5 @@
 const Questions = require('../models/Questions')
+const bcrypt = require('bcrypt')
 
 /**
  * @swagger
@@ -50,7 +51,7 @@ exports.createQuestion = async (req, res) => {
         data.IP = formattedIP == '::1' ? '127.0.0.1' : formattedIP;
 
         data.IP = formattedIP;
-        data.password = parseInt(data.password, 10);
+        data.password = await bcrypt.hash(String(data.password), 10);
 
         const newQuestion = await Questions.create(data);
 
@@ -153,7 +154,8 @@ exports.validatePassword = async (req, res) => {
         }
 
         // 비밀번호 검증
-        if (question.password !== parseInt(password, 10)) {
+        const isMatch = await bcrypt.compare(String(password), question.password);
+        if (!isMatch) {
             return res.status(403).json({ error: "비밀번호가 올바르지 않습니다." });
         }
 

@@ -21,19 +21,6 @@ const Admin = sequelize.define(
             allowNull: false,
             defaultValue: DataTypes.NOW,
         },
-        password: {
-            type: DataTypes.STRING(500),
-            allowNull: false,
-        },
-        department: {
-            type: DataTypes.STRING(500),
-            allowNull: true,
-        },
-        created_at: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            defaultValue: DataTypes.NOW,
-        },
     }, {
     tableName: 'Admin',
     timestamps: false,

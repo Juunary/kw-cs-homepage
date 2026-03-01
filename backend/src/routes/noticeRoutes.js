@@ -25,6 +25,7 @@ router.post('/new-notice',
 
 // 이미지 처리 API
 router.post("/new-notice/upload",
+    verifyAuth,
     upload.single("file"),
     noticeController.uploadNoticeImage);
 
