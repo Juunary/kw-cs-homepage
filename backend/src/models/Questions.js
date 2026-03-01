@@ -15,10 +15,6 @@ const Questions = sequelize.define('Questions', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    IP: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
     question: {
         type: DataTypes.STRING,
         allowNull: false,
