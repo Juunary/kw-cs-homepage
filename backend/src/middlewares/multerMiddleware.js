@@ -1,21 +1,14 @@
 const multer = require("multer");
 const multerS3 = require("multer-s3");
-const AWS = require("aws-sdk");
+const { S3Client } = require("@aws-sdk/client-s3");
 
 // S3 설정
-const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+const s3 = new S3Client({
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
     region: process.env.S3_REGION,
-});
-
-// S3 버킷 목록 출력
-s3.listBuckets((err, data) => {
-    if (err) {
-        console.error("Error:", err);
-    } else {
-        console.log("S3 Buckets:", data.Buckets);
-    }
 });
 
 // Multer S3 스토리지 설정
