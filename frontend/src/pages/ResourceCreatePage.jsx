@@ -20,7 +20,19 @@ export default function ResourceCreatePage() {
     const navigate = useNavigate();
     const checkAuth = useCheckAuth();
 
-    const [submitting, setSubmitting] = useState(false); // 제출 상태를 나타내는 state
+    const [submitting, setSubmitting] = useState(false);
+    const [errors, setErrors] = useState({});
+
+    const validate = () => {
+        const newErrors = {};
+        if (!formData.title.trim()) newErrors.title = "제목을 입력해주세요.";
+        if (!formData.content.trim()) newErrors.content = "내용을 입력해주세요.";
+        if (!formData.provider.trim()) newErrors.provider = "제공자를 입력해주세요.";
+        if (!formData.subject.trim()) newErrors.subject = "관련 과목을 입력해주세요.";
+        if (!formData.file_url.trim()) newErrors.file_url = "자료 주소를 입력해주세요.";
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     useEffect(() => {
         checkAuth(); // 인증 확인
@@ -49,10 +61,10 @@ export default function ResourceCreatePage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // 이미 제출 중이면 함수를 종료합니다.
         if (submitting) return;
+        if (!validate()) return;
 
-        setSubmitting(true); // 제출 시작
+        setSubmitting(true);
 
         try {
             if (id) {
@@ -99,6 +111,7 @@ export default function ResourceCreatePage() {
                        value={formData.title}
                        onChange={handleChange}
                        placeholder="제목을 입력하세요"
+                       error={errors.title}
                      />
 
                     {/* 내용 입력 */}
@@ -112,6 +125,7 @@ export default function ResourceCreatePage() {
                        placeholder="내용을 입력하세요"
                        rows={7}
                        maxLength={1000}
+                       error={errors.content}
                      />
 
                     {/* 카테고리 선택 */}
@@ -141,6 +155,7 @@ export default function ResourceCreatePage() {
                        value={formData.provider}
                        onChange={handleChange}
                        placeholder="제공자를 입력하세요"
+                       error={errors.provider}
                      />
 
                     {/* 과목 입력 */}
@@ -152,6 +167,7 @@ export default function ResourceCreatePage() {
                        value={formData.subject}
                        onChange={handleChange}
                        placeholder="관련 과목명을 입력하세요(ex. 대학물리학, 기타)"
+                       error={errors.subject}
                      />
 
                     {/* 클라우드 주소 입력 */}
@@ -164,6 +180,7 @@ export default function ResourceCreatePage() {
                        value={formData.file_url}
                        onChange={handleChange}
                        placeholder="http://example.com/resource.pdf"
+                       error={errors.file_url}
                      />
 
                     {/* 제출 버튼 */}

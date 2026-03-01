@@ -19,7 +19,16 @@ const NewNoticePage = () => {
     const [isEditorInitialized, setIsEditorInitialized] = useState(false);
     const editorRef = useRef(null);
     const navigate = useNavigate();
-    const [submitting, setSubmitting] = useState(false); // 제출 상태를 나타내는 state
+    const [submitting, setSubmitting] = useState(false);
+    const [errors, setErrors] = useState({});
+
+    const validate = () => {
+        const newErrors = {};
+        if (!title || !title.trim()) newErrors.title = "제목을 입력해주세요.";
+        if (!content || !content.trim()) newErrors.content = "본문 내용을 입력해주세요.";
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const checkAuth = useCheckAuth(); // useCheckAuth 훅 호출
 
@@ -196,10 +205,10 @@ const NewNoticePage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // 이미 제출 중이면 함수를 종료합니다.
         if (submitting) return;
+        if (!validate()) return;
 
-        setSubmitting(true); // 제출 시작
+        setSubmitting(true);
 
         const requestData = {
             title,
@@ -260,6 +269,7 @@ const NewNoticePage = () => {
                        className="mb-6 text-2xl"
                        value={title ?? ""}
                        onChange={(e) => setTitle(e.target.value)}
+                       error={errors.title}
                      />
                     {/* URL 입력 */}
                      <TextInput
@@ -284,6 +294,9 @@ const NewNoticePage = () => {
                     <CategorySelector category={category} setCategory={setCategory} />
                     {/* TinyMCE 에디터 */}
                     <textarea id="content-editor" className="hidden"></textarea>
+                    {errors.content && (
+                        <p className="mt-1 text-xs font-medium text-red-600">{errors.content}</p>
+                    )}
                     {/* 요약 */}
                     <textarea
                         placeholder="공지 요약을 작성하세요."

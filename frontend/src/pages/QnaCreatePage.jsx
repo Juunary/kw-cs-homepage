@@ -13,29 +13,28 @@ const QnaCreatePage = () => {
 
     const navigate = useNavigate();
 
-    const [submitting, setSubmitting] = useState(false); // 제출 상태를 나타내는 state
+    const [submitting, setSubmitting] = useState(false);
+    const [errors, setErrors] = useState({});
+
+    const validate = () => {
+        const newErrors = {};
+        if (!title.trim()) newErrors.title = "제목을 입력해주세요.";
+        if (!nickname.trim()) newErrors.nickname = "작성자를 입력해주세요.";
+        if (!/^\d{4}$/.test(password)) newErrors.password = "비밀번호는 4자리 숫자여야 합니다.";
+        if (!question.trim()) newErrors.question = "질문 내용을 입력해주세요.";
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // 이미 제출 중이면 함수를 종료합니다.
         if (submitting) return;
+        if (!validate()) return;
 
         setSubmitting(true);
 
         try {
-
-            // 비밀번호 유효성 검사
-            if (password.length != 4) {
-                alert("비밀번호 4자리를 입력해주세요.");
-                return;
-            }
-
-            if (isNaN(password)) {
-                alert("비밀번호는 숫자여야 합니다.");
-                return;
-            }
-
             // 서버로 POST 요청 보내기
             await axios.post(`${import.meta.env.VITE_API_URL}/qna/new-question`, {
                 title,
@@ -88,6 +87,7 @@ const QnaCreatePage = () => {
                            placeholder="제목을 입력하세요"
                            value={title}
                            onChange={(e) => setTitle(e.target.value)}
+                           error={errors.title}
                          />
                     </div>
                     <div className="mb-4">
@@ -98,6 +98,7 @@ const QnaCreatePage = () => {
                            value={nickname}
                            onChange={(e) => setNickname(e.target.value)}
                            className="max-w-xs"
+                           error={errors.nickname}
                          />
                     </div>
                     <div className="mb-4">
@@ -107,6 +108,7 @@ const QnaCreatePage = () => {
                            placeholder="예: 1234"
                            value={password}
                            onChange={(e) => setPassword(e.target.value)}
+                           error={errors.password}
                          />
                     </div>
                     <div className="mb-6">
@@ -117,6 +119,7 @@ const QnaCreatePage = () => {
                            maxLength={300}
                            value={question}
                            onChange={(e) => setQuestion(e.target.value)}
+                           error={errors.question}
                          />
                     </div>
                     <div className="flex justify-center space-x-4 mt-20">
