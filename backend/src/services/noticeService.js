@@ -26,23 +26,18 @@ exports.getNotices = async (categoryName, page, size) => {
             whereCondition.category_id = category.id;
         }
 
-        // 공지사항 조회
+        // 공지사항 조회 (Category JOIN)
         const { count, rows } = await NoticeModel.findAndCountAll({
             where: whereCondition,
+            include: [{ model: CategoryModel, attributes: ['category_name'] }],
             offset,
             limit,
             order: [['created_at', 'DESC']],
         });
 
-        // 카테고리 ID를 문자열로 변환
-        const categoryMapping = {
-            1: '학과',
-            2: '총학',
-        };
-
         const notices = rows.map((notice) => ({
             ...notice.toJSON(), // Sequelize 객체를 일반 객체로 변환
-            category: categoryMapping[notice.category_id] || 'unknown', // 문자열 변환
+            category: notice.Category?.category_name ?? 'unknown',
         }));
 
         return {
